@@ -9,8 +9,15 @@ class Item():
         return self.id
     def getName(self):
         return self.name
+    def getStartingBid(self):
+        return self.startingBid
     def getBid(self):
         return self.currentBid
+    
+    def setName(self, name):
+        self.name = name
+    def setStartingBid(self, startingBid):
+        self.startingBid = startingBid
     
     def bid(self, bid):
         if bid > self.currentBid:
