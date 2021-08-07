@@ -32,3 +32,9 @@ def read_item_by_id(item_id: int):
         return {"message": "Index out of bounds"}
     
     return items[item_id].JSONResponse()
+
+@app.delete("/items/{item_id}")
+def del_item_by_id(item_id: int):
+    del items[item_id]
+
+    
