@@ -6,6 +6,11 @@ app = FastAPI()
 # Advanced database system
 items = []
 
+def inBounds(x):
+    if x > 0 and x < len(items)-1:
+        return True
+    return False
+
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
@@ -28,13 +33,25 @@ def read_items():
 
 @app.get("/items/{item_id}")
 def read_item_by_id(item_id: int):
-    if item_id > len(items)-1 or item_id < 0:
-        return {"message": "Index out of bounds"}
-    
-    return items[item_id].JSONResponse()
+    if inBounds(item_id):
+        return items[item_id].JSONResponse()
+
+    return {"message": "Index out of bounds"}
 
 @app.delete("/items/{item_id}")
 def del_item_by_id(item_id: int):
-    del items[item_id]
-
+    if inBounds(item_id):
+        del items[item_id]
+        return {"deleted": item_id}
     
+    return {"message": "Index out of bounds"}
+    
+'''
+@app.put("/items/{item_id}")
+def update_item_name(item_id: int, new_name: str):
+    if inBounds(item_id):
+        if new_name != "":
+        items[item_id].setName(new_name)
+    
+    return items[item_id].JSONResponse()
+'''
