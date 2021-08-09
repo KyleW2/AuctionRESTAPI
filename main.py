@@ -59,7 +59,7 @@ def update_item_name(item_id: int, new_name: str):
     
     return {"message": "Item not found"}
 
-@app.put("/items/{item_id}")
+@app.put("/items/{item_id}/bid")
 def place_bid(item_id: int, bid_amount: int):
     if getIndexFromID(item_id) > -1:
         bid_placed = items[getIndexFromID(item_id)].bid(bid_amount)
