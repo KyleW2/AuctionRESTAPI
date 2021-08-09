@@ -1,4 +1,4 @@
 import random
 
-def genID(self):
+def genID():
     return random.randint(100000, 999999)
