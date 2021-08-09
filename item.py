@@ -26,4 +26,4 @@ class Item():
         return False
     
     def JSONResponse(self):
-        return {"item_id": self.id, "item_name": self.name, "current_bid": self.currentBid}
+        return {"item_id": self.id, "item_name": self.name, "starting_bid": self.startingBid, "current_bid": self.currentBid}
