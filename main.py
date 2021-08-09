@@ -46,12 +46,12 @@ def del_item_by_id(item_id: int):
     
     return {"message": "Index out of bounds"}
     
-'''
 @app.put("/items/{item_id}")
 def update_item_name(item_id: int, new_name: str):
     if inBounds(item_id):
         if new_name != "":
-        items[item_id].setName(new_name)
+            items[item_id].setName(new_name)
+            return items[item_id].JSONResponse()
+        return {"message": "Item name cannot be empty"}
     
-    return items[item_id].JSONResponse()
-'''
+    return {"message": "Index out of bounds"}
