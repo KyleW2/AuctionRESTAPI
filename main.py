@@ -7,7 +7,7 @@ app = FastAPI()
 items = []
 
 def inBounds(x):
-    if x > 0 and x < len(items)-1:
+    if x > -1 and x < len(items):
         return True
     return False
 
