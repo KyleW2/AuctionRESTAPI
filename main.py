@@ -42,7 +42,7 @@ def read_item_by_id(item_id: int):
     return {"message": "Item not found"}
 
 @app.delete("/items/{item_id}")
-def del_item_by_id(item_id: int):
+def delete_item_by_id(item_id: int):
     if getIndexFromID(item_id) > -1:
         del items[getIndexFromID(item_id)]
         return {"deleted": item_id}
@@ -59,8 +59,8 @@ def update_item_name(item_id: int, new_name: str):
     
     return {"message": "Item not found"}
 
-@app.put("/items/{item_id}/bid")
-def place_bid(item_id: int, bid_amount: int):
+@app.post("/items/{item_id}/bid")
+def post_bid(item_id: int, bid_amount: int):
     if getIndexFromID(item_id) > -1:
         bid_placed = items[getIndexFromID(item_id)].bid(bid_amount)
 
