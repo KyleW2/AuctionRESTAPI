@@ -1,10 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 from item import Item
 import idgen
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
-# Advanced database system
+# Modern opensource lightweight dependency-free database
+#
+#        |
+#        V
 items = []
 
 def getIndexFromID(id):
@@ -13,6 +20,16 @@ def getIndexFromID(id):
             return i
     
     return -1
+
+def HTMLItemResponse(request, index):
+    return templates.TemplateResponse("item.html", {"request": request,
+                                                        "item_name": items[index].getName(), 
+                                                        "starting_bid": items[index].getStartingBid(),
+                                                        "current_bid": items[index].getBid()
+    })
+
+def HTMLNotFoundResponse(request, message):
+    return templates.TemplateResponse("item_not_found.html", {"request": request, "message": message})
 
 @app.get("/")
 def read_root():
@@ -34,38 +51,39 @@ def read_items():
     
     return out
 
-@app.get("/items/{item_id}")
-def read_item_by_id(item_id: int):
+@app.get("/items/{item_id}", response_class=HTMLResponse)
+def read_item_by_id(request: Request, item_id: int):
     if getIndexFromID(item_id) > -1:
-        return items[getIndexFromID(item_id)].JSONResponse()
+        #return items[getIndexFromID(item_id)].JSONResponse()
+        return HTMLItemResponse(request, getIndexFromID(item_id))
 
-    return {"message": "Item not found"}
+    return HTMLNotFoundResponse(request, "")
 
-@app.delete("/items/{item_id}")
-def delete_item_by_id(item_id: int):
+@app.delete("/items/{item_id}", response_class=HTMLResponse)
+def delete_item_by_id(request: Request, item_id: int):
     if getIndexFromID(item_id) > -1:
         del items[getIndexFromID(item_id)]
-        return {"deleted": item_id}
+        return templates.TemplateResponse("item_deleted.html", {"request": request})
     
-    return {"message": "Item not found"}
-    
-@app.put("/items/{item_id}")
-def update_item_name(item_id: int, new_name: str):
+    return HTMLNotFoundResponse(request, "The item was not deleted")
+
+@app.put("/items/{item_id}", response_class=HTMLResponse)
+def update_item_name(request: Request, item_id: int, new_name: str):
     if getIndexFromID(item_id) > -1:
         if new_name != "":
             items[getIndexFromID(item_id)].setName(new_name)
-            return items[getIndexFromID(item_id)].JSONResponse()
+            return HTMLItemResponse(request, getIndexFromID(item_id))
         return {"message": "Item name cannot be empty"}
     
-    return {"message": "Item not found"}
+    return HTMLNotFoundResponse(request, "")
 
-@app.post("/items/{item_id}/bid")
-def post_bid(item_id: int, bid_amount: int):
+@app.post("/items/{item_id}", response_class=HTMLResponse)
+def post_bid(request: Request, item_id: int, bid_amount: int):
     if getIndexFromID(item_id) > -1:
         bid_placed = items[getIndexFromID(item_id)].bid(bid_amount)
 
         if bid_placed:
-            return items[getIndexFromID(item_id)].JSONResponse()
+            return HTMLItemResponse(request, getIndexFromID(item_id))
         return {"message": "Bid amount must be higher than current bid"}
     
-    return {"message": "Item not found"}
+    return HTMLNotFoundResponse(request, "")
